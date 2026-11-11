@@ -1,3 +1,4 @@
+import math
 import random
 
 import streamlit as st
@@ -41,7 +42,7 @@ ORIENTATIONS = ["Up", "Down", "Left", "Right"]
 
 
 def student_next_size_index(*, current_index: int, is_correct: bool, max_index: int) -> int:
-    """TODO: Compute the next adaptive size index for the staircase.
+    """Compute the next adaptive size index for the staircase.
 
     Why this function exists:
         This is the core adaptive rule for the visual acuity task. The page calls it
@@ -62,8 +63,16 @@ def student_next_size_index(*, current_index: int, is_correct: bool, max_index: 
         - Incorrect response: move to a larger optotype by decreasing index by 1.
         - Always clamp so index never goes below 0 or above `max_index`.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
-
+    if is_correct:
+        if current_index == max_index:
+            return max_index
+        else:
+            return current_index + 1
+    else:
+        if current_index == 0:
+            return current_index
+        else:
+            return current_index - 1
 
 def student_build_trial_log_row(
     *,
@@ -73,7 +82,7 @@ def student_build_trial_log_row(
     correct_orientation: str,
     response: str,
 ) -> dict[str, str | int | float]:
-    """TODO: Build a complete, standardized row for the trial log table.
+    """Build a complete, standardized row for the trial log table.
 
     Why this function exists:
         The experiment needs a clean row per trial for grading and analysis. This
@@ -96,13 +105,23 @@ def student_build_trial_log_row(
         - Include correctness as an explicit readable value.
         - Round MAR to 2 decimals for stable, readable output.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
-
+    correct = "No"
+    if response == correct_orientation:
+        correct = "Yes"
+    dict = {
+        "trial" : trial_no, 
+        "size" : size_px, 
+        "mar" : round(mar_arcmin, 2), 
+        "correct orientation" : correct_orientation, 
+        "response" : response,
+        "Correct" : correct
+    }
+    return dict
 
 def student_validate_screen_geometry(
     *, distance_cm: float, screen_width_mm: float, screen_width_px: int
 ) -> bool:
-    """TODO: Validate whether screen-geometry inputs are usable.
+    """Validate whether screen-geometry inputs are usable.
 
     Why this function exists:
         MAR calculations rely on physically meaningful geometry values. Invalid
@@ -121,11 +140,13 @@ def student_validate_screen_geometry(
         - Pixel width is large enough to avoid divide-by-zero / tiny denominator.
         - Distance and width remain in realistic human-testing ranges.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
-
+    if distance_cm <= 19 or distance_cm > 500 or screen_width_mm <= 119 or screen_width_mm > 1000 or screen_width_px <= 799 or screen_width_mm > 8000: #this confirms values will be at least the minimum and no more than maximum stated in the test setup
+        return False
+    else:
+        return True
 
 def student_compute_mar_arcmin(size_px: int, mm_per_px: float, distance_cm: float) -> float:
-    """TODO: Compute MAR (minimum angle of resolution) in arcminutes.
+    """Compute MAR (minimum angle of resolution) in arcminutes.
 
     Why this function exists:
         Pixel size alone is device-dependent; MAR converts that size into a vision
@@ -145,8 +166,21 @@ def student_compute_mar_arcmin(size_px: int, mm_per_px: float, distance_cm: floa
         - Use a small-angle geometry formula, then convert radians to arcminutes.
         - Return a positive float and guard invalid denominators.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
+    #guard against negative or zero distances
+    if size_px <= 0 or distance_cm <= 0 or mm_per_px <= 0:
+        return 0.0
 
+    pixel_in_mm = size_px * mm_per_px
+    distance_mm = distance_cm * 10
+    if distance_cm < 1e-6: #guards invalid denominator
+        return 0.0
+
+    angle_rad = pixel_in_mm / distance_mm
+
+    #convert radians to arcminutes
+    angle_arcminute = angle_rad * ((180 / math.pi) * 60.0)
+
+    return float(angle_arcminute)
 
 def student_format_trial_log_row(
     *,
@@ -156,7 +190,7 @@ def student_format_trial_log_row(
     correct_orientation: str,
     response: str,
 ) -> dict[str, str | int | float]:
-    """TODO: Wrapper/formatter for a standardized trial-log row.
+    """Wrapper/formatter for a standardized trial-log row.
 
     Why this function exists:
         In many real codebases, one helper computes values and another helper
@@ -167,7 +201,7 @@ def student_format_trial_log_row(
         This function should return the same schema as `student_build_trial_log_row`,
         potentially by calling it internally and applying final formatting rules.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
+    return student_build_trial_log_row(trial_no, size_px,mar_arcmin,correct_orientation, response)
 
 
 with st.expander("Assignment TODOs (Edit This Page)"):

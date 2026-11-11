@@ -51,21 +51,30 @@ def student_estimate_audible_bounds(
     probe_history_hz: list[int],
     heard_flags: list[bool],
 ) -> tuple[int, int]:
-    """TODO: summarize heard probe frequencies into lower/upper bounds.
+    """summarize heard probe frequencies into lower/upper bounds.
 
     Pair the frequencies marked as heard and return the min/max. If no probes
     were heard, return a sensible fallback such as the configured default.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
-
+    if len(heard_flags) == 0:
+        low = 4000
+        high = 4000
+    else:
+        heard = [val for val, cond in zip(probe_history_hz, heard_flags) if cond == 1]
+        low = min(heard)
+        high = max(heard)
+    return (low, high)
 
 def student_validate_audio_params(*, frequency_hz: int, amplitude: float) -> bool:
-    """TODO: ensure requested playback parameters stay within config limits.
+    """ensure requested playback parameters stay within config limits.
 
     Return `True` when `frequency_hz` and `amplitude` fall inside the configured
     range, otherwise return `False`.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
+    if frequency_hz > 20000 or frequency_hz < 20 or amplitude < 0.05 or amplitude > 0.80: 
+        return False
+    else:
+        return True
 
 
 with st.expander("Assignment TODOs (Edit This Page)"):

@@ -55,7 +55,7 @@ def student_build_preview_triplets(
     If `rows <= 0` or `letters_pool` is empty, return an empty list.
     """
     result: list[str] = []
-    if rows <= 0 | len(letters_pool) == 0:
+    if rows <= 0 or len(letters_pool) == 0:
         return result
     else:
         rng = random.Random(seed)
@@ -95,7 +95,7 @@ def student_advance_contrast_state(
     """
     finished = False
     next_index = 0
-    if response_yes == False | trial_index + 1 > total_levels - 1:
+    if response_yes == False or trial_index + 1 > total_levels - 1:
         finished = True
         next_index = trial_index
         return (next_index, finished)
