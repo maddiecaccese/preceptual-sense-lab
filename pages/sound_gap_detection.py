@@ -1,4 +1,5 @@
 import streamlit as st
+import random
 
 from pages._shared_3afc_student import (
     shared_student_apply_reversal_update,
@@ -65,7 +66,7 @@ def student_build_gap_intervals_audio(
     target_index: int,
     seed: int,
 ) -> list[bytes]:
-    """TODO: Build one 3AFC trial audio set for gap detection.
+    """Build one 3AFC trial audio set for gap detection.
 
     Why this function exists:
         The listener must compare three intervals where only one contains the silent
@@ -86,8 +87,28 @@ def student_build_gap_intervals_audio(
         - Keep amplitude consistent across all three clips.
         - Use deterministic seeds so repeated runs are reproducible.
     """
-    raise NotImplementedError("Not implemented yet; follow the docstring guidance.")
+    rng = random.Random(seed)
 
+    total_samples = 44100
+    gap_samples = int(44100 * (gap_ms / 1000.0))
+    pre_gap_samples = (total_samples - gap_samples) // 2
+
+    other_interval = []
+    for _ in range(total_samples):
+        other_interval.append(rng.randint(int(-amplitude * 32767), int(amplitude * 32767)))
+
+    gapped_interval = []
+    gapped_interval.append(other_interval[:pre_gap_samples])
+    gapped_interval.append([0] * gap_samples)
+    gapped_interval.append(other_interval[pre_gap_samples + gap_samples:])
+
+    result: list[bytes] = []
+    for index in range(3):
+        if index == target_index:
+            result.append(gapped_interval)
+        else:
+            result.append(other_interval)
+    return result
 
 def student_apply_reversal_update(
     *,
@@ -99,7 +120,7 @@ def student_apply_reversal_update(
     min_level: float,
     max_level: float,
 ) -> tuple[float, int]:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     return shared_student_apply_reversal_update(
         current_level=current_level,
         step=step,
@@ -112,7 +133,7 @@ def student_apply_reversal_update(
 
 
 def student_plot_staircase(history: list[dict], threshold: float, y_label: str, title: str) -> None:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     shared_student_plot_staircase(
         history=history,
         threshold=threshold,
@@ -122,7 +143,7 @@ def student_plot_staircase(history: list[dict], threshold: float, y_label: str, 
 
 
 def student_build_three_interval_targets(*, target_index: int) -> list[bool]:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     return shared_student_build_three_interval_targets(target_index=target_index)
 
 
@@ -136,7 +157,7 @@ def student_update_staircase_state(
     min_level: float,
     max_level: float,
 ) -> tuple[float, int]:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     return shared_student_update_staircase_state(
         current_level=current_level,
         step=step,
@@ -151,7 +172,7 @@ def student_update_staircase_state(
 def student_estimate_threshold_from_reversals(
     *, reversals: list[float], fallback_level: float, tail_count: int = 4
 ) -> float:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     return shared_student_estimate_threshold_from_reversals(
         reversals=reversals,
         fallback_level=fallback_level,
@@ -160,19 +181,19 @@ def student_estimate_threshold_from_reversals(
 
 
 def student_compute_recent_accuracy(history: list[dict], window: int = 12) -> float:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     return shared_student_compute_recent_accuracy(history=history, window=window)
 
 
 def student_validate_audio_params(*, amplitude: float, gap_ms: float) -> bool:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     return shared_student_validate_audio_params(amplitude=amplitude, stimulus_value=gap_ms)
 
 
 def student_plot_staircase_with_threshold(
     *, history: list[dict], threshold: float, y_label: str, title: str
 ) -> None:
-    """Shared 3AFC TODO: implement in `pages/_shared_3afc_student.py`."""
+    """Shared 3AFC implement in `pages/_shared_3afc_student.py`."""
     shared_student_plot_staircase_with_threshold(
         history=history,
         threshold=threshold,
