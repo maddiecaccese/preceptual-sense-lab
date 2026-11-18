@@ -75,21 +75,20 @@ def shared_student_plot_staircase(
     Safety requirements:
         - Do not crash for empty or very short history lists.
     """
-    x = range(len(history))
-    print(x)
-    y= []
-    for metric in history:
-        y.append(metric["Correct"])
-    fig, ax = plt.subplots()
-    ax.step(x, y, where="post", label="Step", linewidth=2)
-    ax.axhline(y=threshold, color="red", label="Threshold", linestyle="--")
-    ax.set_title(title)
-    ax.set_xlabel("Trial Number")
-    ax.set_ylabel(y_label)
-    ax.legend()
-    ax.grid(True, linestyle="--", alpha=0.5)
-
-    st.pyplot(fig)
+    if len(history) > 2:
+        x = range(len(history))
+        y= []
+        for metric in history:
+            y.append(metric["Correct"])
+        fig, ax = plt.subplots()
+        ax.step(x, y, where="post", label="Step", linewidth=2)
+        ax.axhline(y=threshold, color="red", label="Threshold", linestyle="--")
+        ax.set_title(title)
+        ax.set_xlabel("Trial Number")
+        ax.set_ylabel(y_label)
+        ax.legend()
+        ax.grid(True, linestyle="--", alpha=0.5)
+        st.pyplot(fig)
 
 def shared_student_build_three_interval_targets(*, target_index: int) -> list[bool]:
     """Build a length-3 target mask with exactly one `True` entry.
