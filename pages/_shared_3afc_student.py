@@ -156,7 +156,7 @@ def shared_student_validate_audio_params(*, amplitude: float, stimulus_value: fl
         `True` when inputs are in safe ranges, otherwise `False`.
     """
     #researched and safe amplitudes are between 0.0001 and 0.5
-    # safe stimulus value is
+    # safe stimulus value is <= 0
     if amplitude > 0.5 or amplitude < 0.0001 or stimulus_value <= 0:
         return False
     else:
